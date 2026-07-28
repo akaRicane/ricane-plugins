@@ -1,0 +1,40 @@
+# ── CMake build trees ─────────────────────────────────────────
+# Each plugin builds into bank/<plugin>/build/ ; ignore all of them.
+build/
+cmake-build-*/
+
+# ── Compiled artifacts (belt-and-suspenders; normally under build/) ──
+*.o
+*.obj
+*.a
+*.lib
+*.exe
+
+# ── Built plugin bundles ──────────────────────────────────────
+*.vst3
+*.component
+*.app
+
+# ── macOS ─────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+._*
+
+# ── Editors / IDEs ────────────────────────────────────────────
+.obsidian
+.vscode/
+.idea/
+*.xcodeproj/
+*.swp
+*~
+
+# ── Claude Code (keep project settings, ignore local overrides) ──
+.claude/settings.local.json
+
+# ── JUCE framework (vendored) ─────────────────────────────────
+# JUCE/ is a full framework checkout (very large). Ignored by default.
+# If you want a self-contained repo instead, the clean way is a submodule:
+#     git rm -r --cached JUCE            # if already tracked
+#     git submodule add https://github.com/juce-framework/JUCE.git JUCE
+#   then delete the line below so the submodule is tracked.
+JUCE/
