@@ -12,7 +12,7 @@ Built and maintained by **Ricane**.
 plugins/
 ├── bank/                # the plugins (each self-contained, its own CMakeLists)
 │   └── GainPlugin/       # a smoothed gain: parameter + apvts + juce::dsp::Gain
-├── documentation/       # readable notes on concepts & workflow
+├── documentation/       # readable notes + a copy-me example_plugin/ template
 ├── JUCE/                # the JUCE framework (V8)  — see note below
 ├── build.sh             # build helper (interactive menu or by name)
 ├── LICENSE              # MIT
@@ -60,6 +60,15 @@ Full details, including every CMake option and common gotchas, are in
 |---|---|
 | **GainPlugin** | Volume control in decibels, click-free thanks to `juce::dsp::Gain` smoothing. VST3 + Standalone. |
 
+## TODO / Roadmap
+
+- [ ] Add **JUCE** as a git submodule (currently a vendored 8.0.13 checkout) — pins the
+      version and makes the repo self-contained (`git clone --recursive`). See the note under
+      *License*; the folder is already a clean clone at 8.0.13, so conversion needs no re-download.
+- [ ] Add **[Gin](https://github.com/FigBug/Gin)** (FigBug's extra JUCE modules) as a submodule,
+      for additional DSP/GUI building blocks to use in plugins.
+- [ ] Next plugin: **Panning** — first real use of `documentation/example_plugin/`.
+
 ## Documentation
 
 - [`00_plugin_anatomy.md`](documentation/00_plugin_anatomy.md) — the five functions that matter in a processor
@@ -67,6 +76,8 @@ Full details, including every CMake option and common gotchas, are in
 - [`02_panning.md`](documentation/02_panning.md) — stereo panning
 - [`03_delay.md`](documentation/03_delay.md) — delay line basics
 - [`build_process.md`](documentation/build_process.md) — CMake build workflow & reference
+- [`editor_setup.md`](documentation/editor_setup.md) — clean IntelliSense & formatting (no red squiggles)
+- [`starter_template.md`](documentation/starter_template.md) — start a new plugin from `example_plugin/`
 
 ## License
 
