@@ -1,7 +1,7 @@
 BasedOnStyle: LLVM
 IndentWidth: 2
 ColumnLimit: 120
-BreakBeforeBraces: Allman
+BreakBeforeBraces: Attach
 AllowShortFunctionsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: false

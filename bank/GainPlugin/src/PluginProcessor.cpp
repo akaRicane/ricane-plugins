@@ -6,12 +6,9 @@ GainAudioProcessor::GainAudioProcessor()
           juce::AudioProcessor::BusesProperties()
               .withInput("Input", juce::AudioChannelSet::stereo(), true)
               .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
-      apvts (*this, nullptr, "Parameters", createParameterLayout())
-{
-}
+      apvts(*this, nullptr, "Parameters", createParameterLayout()) {}
 
-juce::AudioProcessorValueTreeState::ParameterLayout GainAudioProcessor::createParameterLayout()
-{
+juce::AudioProcessorValueTreeState::ParameterLayout GainAudioProcessor::createParameterLayout() {
   juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
   layout.add(
@@ -43,9 +40,7 @@ void GainAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mi
   gain.process(context);
 }
 
-juce::AudioProcessorEditor* GainAudioProcessor::createEditor() {
-  return new GainAudioProcessorEditor(*this);
-}
+juce::AudioProcessorEditor* GainAudioProcessor::createEditor() { return new GainAudioProcessorEditor(*this); }
 
 void GainAudioProcessor::getStateInformation(juce::MemoryBlock& destData) {
   // juce::ignoreUnused(destData);
@@ -60,6 +55,4 @@ void GainAudioProcessor::setStateInformation(const void* data, int sizeInBytes) 
       apvts.replaceState(juce::ValueTree::fromXml(*xml));
 }
 
-juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
-  return new GainAudioProcessor();
-}
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new GainAudioProcessor(); }

@@ -20,9 +20,13 @@ USAGE:
   ./build.sh                 Interactive: pick a plugin from a menu
   ./build.sh <plugin>        Build a specific plugin
   ./build.sh -o <plugin>     Build, then open the Standalone app
+  ./build.sh -c <plugin>     Force a re-configure, then build
   ./build.sh -h | --help     Show this help
 
 OPTIONS:
+  -c, --configure            Force `cmake -B build -S .` before building, even if build/
+                             already exists. Use after changing CMake options, adding a
+                             source file, or to regenerate compile_commands.json.
   -o, --open                 After a successful build, launch the Standalone app
                              (relaunches it if already running). Works in both modes.
 
@@ -74,10 +78,11 @@ resolve_plugin() {
 
 build_plugin() {
   local dir="$1"
+  local force_configure="$2"
   echo "==> Plugin: $(basename "$dir")"
   echo "==> Folder: $dir"
-  if [ ! -d "$dir/build" ]; then
-    echo "==> Configuring (first build, this is the slow one)…"
+  if [ "$force_configure" = true ] || [ ! -d "$dir/build" ]; then
+    echo "==> Configuring…"
     cmake -S "$dir" -B "$dir/build"
   fi
   echo "==> Building…"
@@ -103,6 +108,7 @@ open_standalone() {
 
 main() {
   local open_after=false
+  local force_configure=false
   local plugin_arg=""
 
   # Parse arguments: flags in any order, plus at most one plugin name.
@@ -110,6 +116,7 @@ main() {
     case "$1" in
       -h|--help) usage; exit 0 ;;
       -o|--open) open_after=true ;;
+      -c|--configure) force_configure=true ;;
       -*)
         echo "error: unknown option '$1' (run ./build.sh --help)" >&2
         exit 1
@@ -159,7 +166,7 @@ main() {
     done
   fi
 
-  build_plugin "$plugin_dir"
+  build_plugin "$plugin_dir" "$force_configure"
 
   if [ "$open_after" = true ]; then
     open_standalone "$plugin_dir"

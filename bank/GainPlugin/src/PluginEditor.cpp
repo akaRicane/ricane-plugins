@@ -1,8 +1,7 @@
 #include "PluginEditor.h"
 
 GainAudioProcessorEditor::GainAudioProcessorEditor(GainAudioProcessor& p)
-  : juce::AudioProcessorEditor(&p), processor(p)
-{
+    : juce::AudioProcessorEditor(&p), processor(p) {
   gainSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
   gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 80, 20);
   addAndMakeVisible(gainSlider);
