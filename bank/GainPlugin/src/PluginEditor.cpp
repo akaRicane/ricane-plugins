@@ -1,13 +1,13 @@
 #include "PluginEditor.h"
 
 GainAudioProcessorEditor::GainAudioProcessorEditor(GainAudioProcessor& p)
-    : juce::AudioProcessorEditor(&p), processor(p) {
+    : juce::AudioProcessorEditor(&p) {
   gainSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
   gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 80, 20);
   addAndMakeVisible(gainSlider);
 
   gainAttachment =
-      std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processor.apvts, "GAIN_DB", gainSlider);
+      std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(p.apvts, "GAIN_DB", gainSlider);
 
   setSize(400, 300);
 }

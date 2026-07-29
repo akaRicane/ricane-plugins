@@ -34,5 +34,5 @@ private:
   static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
   juce::dsp::Gain<float> gain;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GainAudioProcessor);
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GainAudioProcessor)
 };
