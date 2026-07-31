@@ -16,7 +16,7 @@ void GainAudioProcessorEditor::paint(juce::Graphics& g) {
   g.fillAll(juce::Colours::darkgrey);
   g.setColour(juce::Colours::yellow);
   g.setFont(20.0f);
-  g.drawText("Gain Plugin - passthrough", getLocalBounds(), juce::Justification::centred, true);
+  g.drawText(JucePlugin_Name, getLocalBounds(), juce::Justification::centred, true);
 }
 
 void GainAudioProcessorEditor::resized() { gainSlider.setBounds(getLocalBounds().reduced(40)); }
