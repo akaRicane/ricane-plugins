@@ -91,6 +91,9 @@ target_link_libraries(<Target> PRIVATE
   `#error` about "parameter automation conflict between VST2 and VST3." We have no VST2 past, so set it to 0.
 - **`add_subdirectory` path** — relative to the plugin's `CMakeLists.txt`. From `bank/<Plugin>/`
   that's `../../JUCE` (up to `bank/`, up to repo root, into `JUCE/`).
+- **Empty `JUCE/`** — it's a git submodule pinned to the `8.0.13` tag, so a plain `git clone`
+  leaves it empty and configure fails on the `add_subdirectory` above. Fix with
+  `git submodule update --init` (or clone with `--recursive` next time).
 
 ## Starting a new plugin in /bank
 

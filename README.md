@@ -13,7 +13,7 @@ plugins/
 ├── bank/                # the plugins (each self-contained, its own CMakeLists)
 │   └── GainPlugin/       # a smoothed gain: parameter + apvts + juce::dsp::Gain
 ├── documentation/       # readable notes + a copy-me example_plugin/ template
-├── JUCE/                # the JUCE framework (V8)  — see note below
+├── JUCE/                # the JUCE framework (submodule, pinned to 8.0.13) — see note below
 ├── build.sh             # build helper (interactive menu or by name)
 ├── LICENSE              # MIT
 └── README.md
@@ -26,7 +26,24 @@ in directly, so plugins never depend on each other and can be built in isolation
 
 - **macOS** with the Xcode command-line tools (a C++17 compiler)
 - **CMake** ≥ 3.22
-- **JUCE 8** — vendored in `JUCE/` (see the JUCE note under *License*)
+- **JUCE 8** — a git submodule in `JUCE/`, pinned to the `8.0.13` tag
+
+## Getting the code
+
+`JUCE/` is a submodule, so clone recursively:
+
+```bash
+git clone --recursive https://github.com/<you>/plugins.git
+```
+
+Already cloned without `--recursive`? Fetch it after the fact:
+
+```bash
+git submodule update --init
+```
+
+Nothing in `bank/` will configure until `JUCE/` is populated — every plugin's
+`CMakeLists.txt` does `add_subdirectory(../../JUCE JUCE)`.
 
 ## Building
 
@@ -62,11 +79,15 @@ Full details, including every CMake option and common gotchas, are in
 
 ## TODO / Roadmap
 
-- [ ] Add **JUCE** as a git submodule (currently a vendored 8.0.13 checkout) — pins the
-      version and makes the repo self-contained (`git clone --recursive`). See the note under
-      *License*; the folder is already a clean clone at 8.0.13, so conversion needs no re-download.
+- [x] Add **JUCE** as a git submodule — pinned to the `8.0.13` tag, so the repo is
+      self-contained via `git clone --recursive`.
 - [ ] Add **[Gin](https://github.com/FigBug/Gin)** (FigBug's extra JUCE modules) as a submodule,
       for additional DSP/GUI building blocks to use in plugins.
+- [ ] Add **[pluginval](https://github.com/Tracktion/pluginval)** to the workflow — validates a
+      built plugin against what a strict host expects (many sample-rate × block-size combos,
+      parameter fuzzing, state round-trips) and its `--rtcheck` mode catches allocations and
+      locks on the audio thread. Likely a `validate.sh` driving the released binary
+      (`brew install --cask pluginval`), with the CMake-target route reserved for debugging.
 - [ ] Next plugin: **Panning** — first real use of `documentation/example_plugin/`.
 
 ## Documentation
@@ -85,6 +106,6 @@ This project's code is released under the **MIT License** — you're free to use
 distribute it, **as long as you keep the copyright notice** (credit to Ricane). See
 [`LICENSE`](LICENSE).
 
-> **Note on JUCE:** the framework in `JUCE/` is **not** covered by this license. JUCE has its
-> own licensing terms (see [`JUCE/LICENSE.md`](JUCE/LICENSE.md)). The MIT license here applies
-> only to the plugin code in `bank/` and the docs — not to JUCE itself.
+> **Note on JUCE:** the framework in `JUCE/` is a submodule and is **not** covered by this
+> license. JUCE has its own licensing terms (see [`JUCE/LICENSE.md`](JUCE/LICENSE.md)). The MIT
+> license here applies only to the plugin code in `bank/` and the docs — not to JUCE itself.

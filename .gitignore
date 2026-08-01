@@ -31,10 +31,7 @@ cmake-build-*/
 # ── Claude Code (keep project settings, ignore local overrides) ──
 .claude/settings.local.json
 
-# ── JUCE framework (vendored) ─────────────────────────────────
-# JUCE/ is a full framework checkout (very large). Ignored by default.
-# If you want a self-contained repo instead, the clean way is a submodule:
-#     git rm -r --cached JUCE            # if already tracked
-#     git submodule add https://github.com/juce-framework/JUCE.git JUCE
-#   then delete the line below so the submodule is tracked.
-JUCE/
+# ── JUCE framework ────────────────────────────────────────────
+# JUCE/ is a git submodule pinned to the 8.0.13 tag (see .gitmodules).
+# Its contents are tracked by that submodule, not by this repo, so nothing
+# to ignore here. Fetch it with:  git submodule update --init
