@@ -185,6 +185,28 @@ Three modes, via `-r` / `--rtcheck`:
 - `enabled` — strict; flags the first block too. Expect noise from framework startup here, so
   read its findings with judgement rather than treating every hit as your bug.
 
+**`-r enabled` currently fails for every plugin in `bank/`,** including one as simple as
+GainPlugin. It always dies in the `Automation` test group with a `calloc` whose stack trace is
+entirely inside JUCE:
+
+```
+wrap_calloc
+ _malloc_type_calloc_outlined
+  dyld::ThreadLocalVariables::instantiateVariable(...)
+   _tlv_get_addr
+    juce::setValueAndNotifyIfChanged(juce::AudioProcessorParameter&, float)
+     juce::JuceVST3Component::processParameterChanges(...)
+```
+
+That's macOS lazily allocating storage for a **thread-local variable** the first time JUCE's VST3
+parameter path touches it on the audio thread. It's one allocation, in framework code, and nothing
+you write in `processBlock` can prevent it.
+
+**So `relaxed` is the meaningful gate, not a weaker one.** It skips exactly the first block, which
+is where this startup noise lives, while still catching every allocation in steady-state
+processing. Use `-r enabled` only when you're chasing a specific suspicion and are prepared to read
+past the JUCE frames — a plain "FAILED" from it means nothing on its own.
+
 ---
 
 ## When something fails

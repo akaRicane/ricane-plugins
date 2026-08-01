@@ -39,7 +39,7 @@ Requirements, editor setup and troubleshooting are in
 |---|---|
 | **[GainPlugin](documentation/plugins/gain_plugin.md)** | Volume control in decibels, click-free thanks to `juce::dsp::Gain` smoothing |
 | **[PannerPlugin](documentation/plugins/panner_plugin.md)** | Stereo panning with a −6 dB pan law and per-sample smoothing |
-| **[DelayPlugin](documentation/plugins/delay_plugin.md)** | The first time-based plugin — *scaffolded, DSP in progress* |
+| **[DelayPlugin](documentation/plugins/delay_plugin.md)** | The first time-based plugin — single-tap delay with dry/wet |
 
 ## Documentation
 
@@ -51,7 +51,7 @@ New here? [Installation](documentation/setup/installation.md) → build GainPlug
 
 ## Roadmap
 
-**DelayPlugin** is scaffolded and awaiting its DSP; then
+**DelayPlugin** next gains feedback and parameter smoothing; then
 [Gin](https://github.com/FigBug/Gin) as a submodule. What's planned, what's known-broken, and
 what's already landed: [`documentation/roadmap.md`](documentation/roadmap.md).
 

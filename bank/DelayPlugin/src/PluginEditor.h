@@ -16,15 +16,18 @@ public:
   void resized() override;              // Lay out child components when size changes.
 
 private:
-  // NOTE: the base AudioProcessorEditor ALREADY stores the processor as `processor`
-  // (typed AudioProcessor&) — don't declare your own, it would shadow the base one.
-  // When you need YOUR processor type (e.g. to reach apvts), cast the base member:
-  //   auto& proc = static_cast<DelayAudioProcessor&>(processor);
+  // Each knob pairs with an Attachment. The attachment is what keeps the slider and
+  // the parameter in sync BOTH ways — drag the knob and the parameter follows; move
+  // it from host automation and the knob follows. Declare the slider FIRST: members
+  // are destroyed in reverse order, so the attachment must die before the slider it
+  // points at.
+  juce::Slider delayTimeSlider;
+  juce::Label delayTimeLabel;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> delayTimeAttachement;
 
-  // Add controls here. IMPORTANT: declare a control's Attachment AFTER the control,
-  // because members are destroyed in REVERSE order and the attachment points at it.
-  //   juce::Slider mySlider;
-  //   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> myAttachment;
+  juce::Slider wetDrySlider;
+  juce::Label wetDryLabel;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> wetDryAttachement;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayAudioProcessorEditor)
 };

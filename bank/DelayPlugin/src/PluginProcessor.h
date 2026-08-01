@@ -15,6 +15,11 @@ public:
   DelayAudioProcessor();                     // Constructor: sets up buses + parameters.
   ~DelayAudioProcessor() override = default; // Destructor: compiler-generated default.
 
+  // The longest echo we can store. BOTH the parameter range and the ring buffer
+  // are derived from this one number, so they can never drift apart — ask for a
+  // delay longer than the buffer and you read memory that isn't yours.
+  static constexpr float maxDelaySeconds = 5.0f;
+
   // ── Audio lifecycle ──────────────────────────────────────────────────────
   // Called by the host before audio starts (and on sample-rate/blocksize change).
   void prepareToPlay(double sampleRate, int samplesPerBlock) override;
@@ -22,6 +27,9 @@ public:
   void releaseResources() override {}
   // THE audio loop. Runs hundreds of times/sec; must be fast and lock-free.
   void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+  // We index the delay buffer per channel, so we must vet the layouts the host
+  // offers instead of accepting JUCE's "everything is fine" default.
+  bool isBusesLayoutSupported(const BusesLayout&) const override;
 
   // ── Editor (GUI) ─────────────────────────────────────────────────────────
   juce::AudioProcessorEditor* createEditor() override; // Builds our window.
@@ -31,7 +39,9 @@ public:
   const juce::String getName() const override { return JucePlugin_Name; } // From PRODUCT_NAME.
   bool acceptsMidi() const override { return false; }
   bool producesMidi() const override { return false; }
-  double getTailLengthSeconds() const override { return 0.0; } // No reverb/delay tail.
+  // How long sound keeps coming out after the input stops — the host uses this to
+  // know how far past the end of a region it must keep rendering.
+  double getTailLengthSeconds() const override { return maxDelaySeconds; }
 
   // ── Legacy "programs" preset system — required, but we do nothing with it ──
   int getNumPrograms() override { return 1; } // Must be >= 1.
@@ -52,6 +62,22 @@ private:
   // Builds the list of parameters. static = belongs to the class, not an instance
   // (the constructor calls it while apvts is still being built).
   static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+  // The ring (circular) buffer holding past input. `writeHead` is where the next
+  // sample goes; we read behind it by the delay length, wrapping around the end.
+  juce::AudioBuffer<float> delayBuffer;
+  int writeHead{0};
+  // prepareToPlay is the ONLY place the host tells us the sample rate, so we keep
+  // it — processBlock needs it to turn a delay in seconds into a count of samples.
+  double currentSampleRate{44100.0};
+
+  // How long the read head takes to travel to a newly-requested delay time. Too
+  // short and you're back to a click; too long and the knob feels disconnected.
+  static constexpr double delaySmoothingSeconds = 0.05;
+
+  // The delay length ACTUALLY in use, which chases the parameter instead of jumping
+  // to it. Note the type: float, not int. Mid-glide the read head sits BETWEEN two
+  // stored samples, and rounding that to an int is its own source of noise.
+  juce::SmoothedValue<float> smoothedDelaySamples;
 
   // Forbids accidental copying of the processor + warns on leaks in debug builds.
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DelayAudioProcessor)

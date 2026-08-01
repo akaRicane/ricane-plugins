@@ -35,6 +35,20 @@ Things that are wrong or missing today, written down so they don't get quietly f
 - **PannerPlugin uses a simple −6 dB pan law**, so a centred signal is quieter than a hard-panned
   one. Equal-power panning (sin/cos, +3 dB centre) is the usual alternative — see
   [`knowledge/02_panning.md`](knowledge/02_panning.md).
+- **DelayPlugin has no feedback.** It's a single-tap delay — exactly one echo. Storing the mixed
+  output in the ring buffer instead of the dry input is the whole change; see
+  [`plugins/delay_plugin.md`](plugins/delay_plugin.md).
+- **DelayPlugin's delay-time smoothing is tape-style, and that's a choice, not a default.** The
+  read head glides to its new position, so large jumps pitch-bend audibly. A dual-read-head
+  crossfade would retime without the bend, at the cost of two reads per sample.
+- **`./utils/validate.sh -r enabled` fails on every plugin here,** GainPlugin included. It's a
+  `calloc` from lazy thread-local init inside JUCE's own VST3 parameter path, not our code —
+  `-r relaxed` is the gate that means something. Detail in
+  [`tools/pluginval.md`](tools/pluginval.md).
+- **A parameter-ID typo is only caught at runtime.** `SliderAttachment` looks parameters up by
+  string, so misspelling one in the editor compiles cleanly and asserts when the window opens.
+  This already cost time in DelayPlugin (`"WET_DRY"` vs `"DRY_WET"`). Shared `constexpr` ID
+  constants per plugin would make it a compile error.
 - **The Steinberg VST3 validator is disabled** in `cmake/Pluginval.cmake`, because enabling it
   makes CMake fetch and build the entire VST3 SDK. Turning it on would add spec-conformance
   checks on top of what pluginval already does.
