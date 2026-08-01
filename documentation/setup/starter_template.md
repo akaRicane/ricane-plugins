@@ -20,6 +20,23 @@ This guide turns that example into a real plugin in `bank/`.
 > The example is annotated to *teach*. In a real plugin you'll want to trim the comments
 > down to what's useful to you — the code itself is production-ready.
 
+## The short way
+
+```bash
+./utils/new_plugin.sh
+```
+
+That does everything below: copies the folder, renames every identifier, picks a unique
+`PLUGIN_CODE`, and registers the build with the editor. It asks four questions, each with a
+default deduced from the plugin name.
+
+One difference worth knowing: the script names the classes `<Prefix>AudioProcessor` and
+`<Prefix>AudioProcessorEditor`, matching GainPlugin and PannerPlugin, rather than the
+`NewPluginProcessor`/`NewPluginEditor` the template file itself declares.
+
+The rest of this page is what the script does, for when you want to do it by hand or understand
+what it touched.
+
 ## Steps
 
 ### 1. Copy the example into bank/

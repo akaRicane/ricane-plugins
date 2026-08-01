@@ -1,7 +1,7 @@
 # The scripts in `utils/`
 
-Three scripts, one job each. All are run from the repo root, work from any working directory, and
-accept a plugin the same way:
+Four scripts, one job each. All are run from the repo root and work from any working directory.
+The three that operate on an existing plugin accept it the same way:
 
 ```
 GainPlugin                     a folder name inside bank/
@@ -10,6 +10,42 @@ documentation/example_plugin   any directory containing a CMakeLists.txt
 ```
 
 Run any of them with no arguments for an interactive menu, or `--help` for full options.
+
+---
+
+## `new_plugin.sh` — scaffold a new plugin
+
+```bash
+./utils/new_plugin.sh                # asks for everything
+./utils/new_plugin.sh DelayPlugin    # name given, still confirms the rest
+```
+
+Copies [`example_plugin/`](../example_plugin) into `bank/`, renames every identifier in it, and
+registers the new build with the editor. Interactive by design: four questions, each with a
+default deduced from the name, so the usual answer is four presses of Enter.
+
+| Question | Default for `DelayPlugin` | Becomes |
+|---|---|---|
+| Folder & target name | — | the folder, `project()`, and `juce_add_plugin()` target |
+| Class prefix | `Delay` | `DelayAudioProcessor`, `DelayAudioProcessorEditor` |
+| Product name | `Delay Plugin` | `PRODUCT_NAME` — what the DAW shows |
+| `PLUGIN_CODE` | `Dela` | the 4-char plugin ID |
+
+It refuses to continue on a name that isn't a valid CMake target, a folder that already exists,
+or a **`PLUGIN_CODE` already used by another plugin** — it scans every `CMakeLists.txt` in `bank/`
+plus the template, and lists what's taken. That last check exists because PannerPlugin once
+shipped carrying the template's `Newp`, colliding with `example_plugin`.
+
+Two things it does that are easy to forget by hand:
+
+- **Renames the classes to the convention the rest of `bank/` uses.** The template declares
+  `NewPluginProcessor`/`NewPluginEditor`, but GainPlugin and PannerPlugin use
+  `<Prefix>AudioProcessor`/`<Prefix>AudioProcessorEditor`. The script generates the latter.
+- **Adds the build to `.vscode/settings.json`**, so IntelliSense resolves `juce::` in the new
+  files. Reload the window afterwards. If the file is missing it says so and carries on.
+
+It never overwrites an existing plugin and never builds. Afterwards it prints what to do next,
+including the documentation it deliberately does **not** write for you.
 
 ---
 

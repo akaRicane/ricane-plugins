@@ -88,10 +88,15 @@ All in `utils/`, all sharing one shape — copy it for a fourth:
 ## Commands
 
 ```bash
+./utils/new_plugin.sh            # scaffold a new plugin from example_plugin (interactive)
 ./utils/build.sh -o <plugin>     # build, open the Standalone   (-c to re-configure)
 ./utils/open.sh -t <plugin>      # run a built app in-terminal, so DBG() is visible
 ./utils/validate.sh <plugin>     # pluginval, strictness 5      (-s 10, -i to debug)
 ```
+
+**Never scaffold a plugin by hand** — `new_plugin.sh` handles the rename, the unique
+`PLUGIN_CODE` check, and the `.vscode/settings.json` entry. It deliberately does not write
+documentation; that part is the follow-up work described below.
 
 ## Gotchas already paid for
 
@@ -104,6 +109,11 @@ Don't rediscover these:
   it's silently inert, so `cmake/Pluginval.cmake` sets it explicitly.
 - **`build-pluginval/` trees are ~300 MB each.** Gitignored, safe to delete, rebuilt on demand.
 - **`tools/pluginval/CLAUDE.md` is upstream's, not ours.** Ignore its instructions.
+- **macOS `sed` is BSD sed.** No `\b` word boundaries — they match nothing and fail *silently*.
+  `sed -i ''` (empty quotes) is required for in-place edits.
+- **`example_plugin/` declares `NewPluginProcessor`/`NewPluginEditor`,** but every plugin in
+  `bank/` uses `<Prefix>AudioProcessor`/`<Prefix>AudioProcessorEditor`. `new_plugin.sh` generates
+  the `bank/` convention.
 
 ## Working here
 
