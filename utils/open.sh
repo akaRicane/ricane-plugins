@@ -8,20 +8,22 @@
 #
 set -euo pipefail
 
-# Absolute path to this script's directory, so it works from any CWD.
+# Absolute paths derived from this script's location, so it works from any CWD.
+# This script lives in utils/, so the repo root is one level up.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BANK_DIR="$SCRIPT_DIR/bank"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+BANK_DIR="$REPO_ROOT/bank"
 
 usage() {
   cat <<'EOF'
 open.sh — launch the Standalone app of a plugin in /bank
 
 USAGE:
-  ./open.sh                  Interactive: pick a plugin from a menu
-  ./open.sh <plugin>         Open a specific plugin
-  ./open.sh -t <plugin>      Run it in this terminal so DBG/stdout is visible
-  ./open.sh -q <plugin>      Quit a running instance, don't relaunch
-  ./open.sh -h | --help      Show this help
+  ./utils/open.sh                  Interactive: pick a plugin from a menu
+  ./utils/open.sh <plugin>         Open a specific plugin
+  ./utils/open.sh -t <plugin>      Run it in this terminal so DBG/stdout is visible
+  ./utils/open.sh -q <plugin>      Quit a running instance, don't relaunch
+  ./utils/open.sh -h | --help      Show this help
 
 OPTIONS:
   -t, --terminal             Run the executable inside the .app bundle directly, so
@@ -39,7 +41,7 @@ WHAT IT DOES:
   - Quits a stale instance first, so you always get the freshest build
   - Launches it detached (default) or in the foreground (--terminal)
 
-This script never builds. If nothing is found, run ./build.sh <plugin> first.
+This script never builds. If nothing is found, run ./utils/build.sh <plugin> first.
 EOF
 }
 
@@ -108,7 +110,7 @@ main() {
       -t|--terminal) in_terminal=true ;;
       -q|--quit) quit_only=true ;;
       -*)
-        echo "error: unknown option '$1' (run ./open.sh --help)" >&2
+        echo "error: unknown option '$1' (run ./utils/open.sh --help)" >&2
         exit 1
         ;;
       *)
@@ -134,7 +136,7 @@ main() {
     # Mode 2: explicit plugin argument
     if ! plugin_dir="$(resolve_plugin "$plugin_arg")"; then
       echo "error: no plugin folder matches '$plugin_arg'" >&2
-      echo "hint: run ./open.sh with no arguments to list what is built." >&2
+      echo "hint: run ./utils/open.sh with no arguments to list what is built." >&2
       exit 1
     fi
   else
@@ -142,7 +144,7 @@ main() {
     list_plugins
     if [ "${#PLUGINS[@]}" -eq 0 ]; then
       echo "error: no built Standalone app in $BANK_DIR." >&2
-      echo "hint: build one first, e.g. ./build.sh GainPlugin" >&2
+      echo "hint: build one first, e.g. ./utils/build.sh GainPlugin" >&2
       exit 1
     fi
     echo "Standalone apps in bank/:"
@@ -165,7 +167,7 @@ main() {
   local app
   if ! app="$(find_standalone "$plugin_dir")"; then
     echo "error: no Standalone .app under $plugin_dir/build" >&2
-    echo "hint: build it first (./build.sh $(basename "$plugin_dir")), and check" >&2
+    echo "hint: build it first (./utils/build.sh $(basename "$plugin_dir")), and check" >&2
     echo "      that 'Standalone' is listed in FORMATS in its CMakeLists.txt." >&2
     exit 1
   fi

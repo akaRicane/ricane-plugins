@@ -20,6 +20,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # The 2nd word (JUCE) just names the folder CMake uses for JUCE's output.
 add_subdirectory(../../JUCE JUCE)
 
+# Optional plugin validation (off unless -DENABLE_PLUGINVAL=ON).
+# See documentation/testing_with_pluginval.md.
+include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/Pluginval.cmake)
+
+# Formats to build. pluginval_formats() appends AU when validation is enabled,
+# because pluginval insists on an AU target to validate on macOS.
+set(PLUGIN_FORMATS VST3 Standalone)
+pluginval_formats(PLUGIN_FORMATS)
+
 # THE key call: describe the plugin. JUCE turns this into several build targets
 # (a VST3, a Standalone app, and a shared-code library the two link against).
 juce_add_plugin(PannerPlugin
@@ -27,7 +36,7 @@ juce_add_plugin(PannerPlugin
     COMPANY_NAME "Ricane"               # Manufacturer name shown in the host
     PLUGIN_MANUFACTURER_CODE Rcan       # 4-char manufacturer ID (registry code)
     PLUGIN_CODE Newp                    # 4-char plugin ID — make it UNIQUE per plugin
-    FORMATS VST3 Standalone             # Which formats to build
+    FORMATS ${PLUGIN_FORMATS}           # Which formats to build
     IS_SYNTH FALSE                      # Effect (processes audio), not an instrument
     NEEDS_MIDI_INPUT FALSE              # No MIDI in
     NEEDS_MIDI_OUTPUT FALSE             # No MIDI out
@@ -63,3 +72,7 @@ target_link_libraries(PannerPlugin PRIVATE
     juce::juce_recommended_config_flags
     juce::juce_recommended_warning_flags
 )
+
+# Adds pluginval and a 'validate' target, but only when -DENABLE_PLUGINVAL=ON.
+# Must come after juce_add_plugin: it reads the plugin's target properties.
+pluginval_enable(PannerPlugin)

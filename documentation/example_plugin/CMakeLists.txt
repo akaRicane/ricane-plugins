@@ -21,14 +21,26 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # The 2nd word (JUCE) just names the folder CMake uses for JUCE's output.
 add_subdirectory(../../JUCE JUCE)
 
+# Optional plugin validation. Off unless you configure with -DENABLE_PLUGINVAL=ON,
+# so it costs nothing until you ask for it. Validating a plugin catches the bugs
+# that only appear in a real host — see documentation/testing_with_pluginval.md.
+include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/Pluginval.cmake)
+
+# Formats to build. pluginval_formats() appends AU when validation is enabled,
+# because pluginval insists on an AU target to validate on macOS.
+set(PLUGIN_FORMATS VST3 Standalone)
+pluginval_formats(PLUGIN_FORMATS)
+
 # THE key call: describe the plugin. JUCE turns this into several build targets
 # (a VST3, a Standalone app, and a shared-code library the two link against).
 juce_add_plugin(NewPlugin
     PRODUCT_NAME "New Plugin"           # Name shown to the user / in the DAW
     COMPANY_NAME "Ricane"               # Manufacturer name shown in the host
     PLUGIN_MANUFACTURER_CODE Rcan       # 4-char manufacturer ID (registry code)
-    PLUGIN_CODE Newp                    # 4-char plugin ID — make it UNIQUE per plugin
-    FORMATS VST3 Standalone             # Which formats to build
+    PLUGIN_CODE Newp                    # 4-char plugin ID — CHANGE THIS, it must be
+                                        # unique per plugin (two plugins sharing a
+                                        # code confuses hosts)
+    FORMATS ${PLUGIN_FORMATS}           # Which formats to build
     IS_SYNTH FALSE                      # Effect (processes audio), not an instrument
     NEEDS_MIDI_INPUT FALSE              # No MIDI in
     NEEDS_MIDI_OUTPUT FALSE             # No MIDI out
@@ -64,3 +76,7 @@ target_link_libraries(NewPlugin PRIVATE
     juce::juce_recommended_config_flags
     juce::juce_recommended_warning_flags
 )
+
+# Adds pluginval and a 'validate' target, but only when -DENABLE_PLUGINVAL=ON.
+# Must come after juce_add_plugin: it reads the plugin's target properties.
+pluginval_enable(NewPlugin)

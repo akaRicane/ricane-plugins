@@ -1,7 +1,11 @@
 # ── CMake build trees ─────────────────────────────────────────
 # Each plugin builds into bank/<plugin>/build/ ; ignore all of them.
 build/
+build-*/
 cmake-build-*/
+
+# Shared CPM download cache, used by pluginval's dependencies (-DENABLE_PLUGINVAL=ON).
+.cpm-cache/
 
 # ── Compiled artifacts (belt-and-suspenders; normally under build/) ──
 *.o

@@ -20,6 +20,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # build output inside our build/ tree (required because JUCE lives outside it).
 add_subdirectory(../../JUCE JUCE)
 
+# Optional plugin validation (off unless -DENABLE_PLUGINVAL=ON).
+# See documentation/testing_with_pluginval.md.
+include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/Pluginval.cmake)
+
+# Formats to build. pluginval_formats() appends AU when validation is enabled,
+# because pluginval insists on an AU target to validate on macOS.
+set(PLUGIN_FORMATS VST3 Standalone)
+pluginval_formats(PLUGIN_FORMATS)
+
 # The heart of the file: describe the plugin. JUCE turns this one call into
 # several build targets (VST3, Standalone, and a shared-code library).
 juce_add_plugin(GainPlugin
@@ -27,7 +36,7 @@ juce_add_plugin(GainPlugin
     COMPANY_NAME "Ricane"                      # Manufacturer name shown in the host
     PLUGIN_MANUFACTURER_CODE Rcan              # 4-char manufacturer ID (registry code)
     PLUGIN_CODE Gain                           # 4-char plugin ID
-    FORMATS VST3 Standalone                    # Which formats to build
+    FORMATS ${PLUGIN_FORMATS}                  # Which formats to build
     IS_SYNTH FALSE                             # Audio effect, not an instrument
     NEEDS_MIDI_INPUT FALSE                      # No MIDI in
     NEEDS_MIDI_OUTPUT FALSE                     # No MIDI out
@@ -63,3 +72,7 @@ target_link_libraries(GainPlugin PRIVATE
     juce::juce_recommended_config_flags
     juce::juce_recommended_warning_flags
 )
+
+# Adds pluginval and a 'validate' target, but only when -DENABLE_PLUGINVAL=ON.
+# Must come after juce_add_plugin: it reads the plugin's target properties.
+pluginval_enable(GainPlugin)

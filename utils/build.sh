@@ -8,20 +8,22 @@
 #
 set -euo pipefail
 
-# Absolute path to this script's directory, so it works from any CWD.
+# Absolute paths derived from this script's location, so it works from any CWD.
+# This script lives in utils/, so the repo root is one level up.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BANK_DIR="$SCRIPT_DIR/bank"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+BANK_DIR="$REPO_ROOT/bank"
 
 usage() {
   cat <<'EOF'
 build.sh — configure & build a JUCE plugin in /bank
 
 USAGE:
-  ./build.sh                 Interactive: pick a plugin from a menu
-  ./build.sh <plugin>        Build a specific plugin
-  ./build.sh -o <plugin>     Build, then open the Standalone app
-  ./build.sh -c <plugin>     Force a re-configure, then build
-  ./build.sh -h | --help     Show this help
+  ./utils/build.sh                 Interactive: pick a plugin from a menu
+  ./utils/build.sh <plugin>        Build a specific plugin
+  ./utils/build.sh -o <plugin>     Build, then open the Standalone app
+  ./utils/build.sh -c <plugin>     Force a re-configure, then build
+  ./utils/build.sh -h | --help     Show this help
 
 OPTIONS:
   -c, --configure            Force `cmake -B build -S .` before building, even if build/
@@ -118,7 +120,7 @@ main() {
       -o|--open) open_after=true ;;
       -c|--configure) force_configure=true ;;
       -*)
-        echo "error: unknown option '$1' (run ./build.sh --help)" >&2
+        echo "error: unknown option '$1' (run ./utils/build.sh --help)" >&2
         exit 1
         ;;
       *)
@@ -144,7 +146,7 @@ main() {
     # Mode 2: explicit plugin argument
     if ! plugin_dir="$(resolve_plugin "$plugin_arg")"; then
       echo "error: no plugin (folder with a CMakeLists.txt) matches '$plugin_arg'" >&2
-      echo "hint: run ./build.sh with no arguments to list available plugins." >&2
+      echo "hint: run ./utils/build.sh with no arguments to list available plugins." >&2
       exit 1
     fi
   else

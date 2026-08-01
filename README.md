@@ -11,10 +11,16 @@ Built and maintained by **Ricane**.
 ```
 plugins/
 ├── bank/                # the plugins (each self-contained, its own CMakeLists)
-│   └── GainPlugin/       # a smoothed gain: parameter + apvts + juce::dsp::Gain
+│   ├── GainPlugin/       # a smoothed gain: parameter + apvts + juce::dsp::Gain
+│   └── PannerPlugin/     # stereo panning
 ├── documentation/       # readable notes + a copy-me example_plugin/ template
+├── utils/               # the scripts
+│   ├── build.sh          # build a plugin (interactive menu or by name)
+│   ├── open.sh           # launch a built Standalone app
+│   └── validate.sh       # run pluginval against a plugin
+├── cmake/               # shared CMake modules (currently the pluginval glue)
+├── tools/pluginval/     # plugin validator (submodule, opt-in) — see Validating below
 ├── JUCE/                # the JUCE framework (submodule, pinned to 8.0.13) — see note below
-├── build.sh             # build helper (interactive menu or by name)
 ├── LICENSE              # MIT
 └── README.md
 ```
@@ -50,10 +56,18 @@ Nothing in `bank/` will configure until `JUCE/` is populated — every plugin's
 The quickest way is the included helper:
 
 ```bash
-./build.sh                 # interactive: pick a plugin from a menu
-./build.sh GainPlugin      # build a specific plugin
-./build.sh -o GainPlugin   # build, then open the Standalone app
-./build.sh --help          # all options
+./utils/build.sh                 # interactive: pick a plugin from a menu
+./utils/build.sh GainPlugin      # build a specific plugin
+./utils/build.sh -o GainPlugin   # build, then open the Standalone app
+./utils/build.sh --help          # all options
+```
+
+To launch a Standalone you've already built, without rebuilding:
+
+```bash
+./utils/open.sh GainPlugin       # quit any stale instance, then launch
+./utils/open.sh -t GainPlugin    # run in this terminal, so DBG()/stdout is visible
+./utils/open.sh -q GainPlugin    # just quit a running instance
 ```
 
 Or drive CMake directly from a plugin folder:
@@ -71,6 +85,33 @@ Outputs:
 Full details, including every CMake option and common gotchas, are in
 [`documentation/build_process.md`](documentation/build_process.md).
 
+## Validating
+
+[pluginval](https://github.com/Tracktion/pluginval) (submodule in `tools/pluginval/`) loads a
+built plugin and abuses it the way a strict host would: many sample-rate × block-size
+combinations, parameter fuzzing, state save/restore round-trips, editor open/close. Its
+`--rtcheck` mode also catches **allocations and locks on the audio thread**.
+
+```bash
+./utils/validate.sh                     # interactive: pick a plugin from a menu
+./utils/validate.sh GainPlugin          # validate one plugin at strictness 5
+./utils/validate.sh -s 10 GainPlugin    # maximum strictness
+./utils/validate.sh --help              # every option
+```
+
+Exit code 0 means every test passed — trust that over skim-reading the log.
+
+Validation is **off by default**: the first run on a plugin configures a separate
+`build-pluginval/` tree and builds pluginval itself (a whole JUCE app, ~280 MB and several
+minutes). Your normal `build/` tree is untouched, so everyday builds stay fast.
+
+The full guide — what each test group means, strictness levels, the audio-thread rules
+`--rtcheck` enforces, and how to debug a failure — is in
+[`documentation/testing_with_pluginval.md`](documentation/testing_with_pluginval.md).
+
+> pluginval is **GPLv3**, unlike this repo's MIT code. Fine for local validation; never ship a
+> binary that combines the two.
+
 ## Plugins
 
 | Plugin | What it does |
@@ -83,12 +124,12 @@ Full details, including every CMake option and common gotchas, are in
       self-contained via `git clone --recursive`.
 - [ ] Add **[Gin](https://github.com/FigBug/Gin)** (FigBug's extra JUCE modules) as a submodule,
       for additional DSP/GUI building blocks to use in plugins.
-- [ ] Add **[pluginval](https://github.com/Tracktion/pluginval)** to the workflow — validates a
-      built plugin against what a strict host expects (many sample-rate × block-size combos,
-      parameter fuzzing, state round-trips) and its `--rtcheck` mode catches allocations and
-      locks on the audio thread. Likely a `validate.sh` driving the released binary
-      (`brew install --cask pluginval`), with the CMake-target route reserved for debugging.
-- [ ] Next plugin: **Panning** — first real use of `documentation/example_plugin/`.
+- [x] Add **[pluginval](https://github.com/Tracktion/pluginval)** as a submodule, wired into every
+      plugin behind `-DENABLE_PLUGINVAL=ON` and driven by `./utils/validate.sh`.
+      See *Validating* above.
+- [x] Next plugin: **Panning** — first real use of `documentation/example_plugin/`.
+- [ ] Next plugin: **Delay** — the first one where the sample-rate sweep in validation really
+      earns its keep (a delay buffer sized for one rate and used at another is the classic crash).
 
 ## Documentation
 
@@ -97,6 +138,7 @@ Full details, including every CMake option and common gotchas, are in
 - [`02_panning.md`](documentation/02_panning.md) — stereo panning
 - [`03_delay.md`](documentation/03_delay.md) — delay line basics
 - [`build_process.md`](documentation/build_process.md) — CMake build workflow & reference
+- [`testing_with_pluginval.md`](documentation/testing_with_pluginval.md) — validating a plugin against what a strict host expects
 - [`editor_setup.md`](documentation/editor_setup.md) — clean IntelliSense & formatting (no red squiggles)
 - [`starter_template.md`](documentation/starter_template.md) — start a new plugin from `example_plugin/`
 

@@ -54,10 +54,23 @@ Add one line to the `compileCommands` array in [`.vscode/settings.json`](../.vsc
 
 ### 4. Build it
 ```bash
-./build.sh -o Panner    # first run configures, then builds and opens the Standalone
+./utils/build.sh -o Panner    # first run configures, then builds and opens the Standalone
 ```
 You should get a window titled with your plugin name, passing audio through. Now start adding
 DSP.
+
+### 5. Validate it
+```bash
+./utils/validate.sh Panner    # check it behaves in a real host
+```
+Do this once the DSP works, and again before you call the plugin finished. It catches the bugs
+a Standalone build never will — see [`testing_with_pluginval.md`](testing_with_pluginval.md).
+
+Two things the template leaves to you, both of which validation will catch:
+- **`PLUGIN_CODE`** must be unique per plugin. The template ships `Newp`; change it.
+- **`isBusesLayoutSupported`** — if your `processBlock` indexes a channel by number
+  (`getWritePointer(1)`), you must declare which layouts you accept, or a host may hand you a
+  mono buffer and you will read off the end of it.
 
 ## Where to add things (the markers in the example)
 

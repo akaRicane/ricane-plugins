@@ -94,6 +94,23 @@ target_link_libraries(<Target> PRIVATE
 - **Empty `JUCE/`** — it's a git submodule pinned to the `8.0.13` tag, so a plain `git clone`
   leaves it empty and configure fails on the `add_subdirectory` above. Fix with
   `git submodule update --init` (or clone with `--recursive` next time).
+- **`ENABLE_PLUGINVAL` and the AU format** — pluginval's CMake integration hardcodes
+  `<Project>_AU` as the target it validates on macOS, and does `get_target_property` on it
+  unconditionally. If that target doesn't exist, configuring dies with "non-existent target"
+  rather than a useful message. That's why `AU` is appended to `FORMATS` only when
+  `ENABLE_PLUGINVAL` is on. Also note pluginval's `PLUGINVAL_ENABLE_RTCHECK` defaults ON only
+  when pluginval is the *top-level* project, so as a dependency we set it ourselves.
+  Both quirks are handled in `cmake/Pluginval.cmake` — see
+  [`testing_with_pluginval.md`](testing_with_pluginval.md).
+
+## Validating a plugin
+
+```bash
+./utils/validate.sh <plugin>      # pluginval, strictness 5
+```
+
+Uses a separate `build-pluginval/` tree so the normal `build/` one stays fast. Full guide in
+[`testing_with_pluginval.md`](testing_with_pluginval.md).
 
 ## Starting a new plugin in /bank
 
