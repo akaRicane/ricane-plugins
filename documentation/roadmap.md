@@ -5,13 +5,18 @@ Where the project is going, and what's already landed. The point of this repo is
 
 ---
 
-## Next
+## In progress
 
-**Delay plugin.** The natural third plugin, and the first one where a buffer's size depends on the
-sample rate. That makes it the first real test of everything set up so far: a delay line sized for
-44.1 kHz and then run at 96 kHz is the classic beginner crash, and validation's sample-rate sweep
-is built to catch exactly that. Theory notes already exist in
-[`knowledge/03_delay.md`](knowledge/03_delay.md).
+**DelayPlugin — write the DSP.** Scaffolded with `./utils/new_plugin.sh` and currently a
+passthrough: it builds and loads, but has no parameters and an empty `processBlock`. The theory
+and a reference implementation are in [`knowledge/03_delay.md`](knowledge/03_delay.md); the traps
+specific to this one are listed in [`plugins/delay_plugin.md`](plugins/delay_plugin.md).
+
+This is the first plugin whose state must be sized from the sample rate, which makes it the first
+real test of everything set up so far — a delay line sized for 44.1 kHz and then run at 96 kHz is
+the classic beginner crash, and validation's sample-rate sweep is built to catch exactly that.
+
+## Next
 
 **[Gin](https://github.com/FigBug/Gin) as a submodule.** FigBug's extra JUCE modules — more DSP and
 GUI building blocks than JUCE ships with. Same pattern as `JUCE/` and `tools/pluginval/`: pin it,
@@ -53,6 +58,9 @@ Things that are wrong or missing today, written down so they don't get quietly f
 
 **2026-08-01**
 
+- **`utils/new_plugin.sh`** — scaffolds a plugin from `example_plugin/`: renames every identifier
+  to the `<Prefix>AudioProcessor` convention the rest of `bank/` uses, enforces a unique
+  `PLUGIN_CODE`, and registers the build with the editor. **DelayPlugin** was created with it.
 - **Documentation reorganised** into `setup/` · `knowledge/` · `plugins/` · `utils/` · `tools/`,
   with a single index at [`README.md`](README.md). Added installation, per-plugin and script
   reference pages.

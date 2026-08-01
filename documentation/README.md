@@ -50,6 +50,7 @@ what it taught.
 
 - [`gain_plugin.md`](plugins/gain_plugin.md) — decibel volume control, smoothed with `juce::dsp::Gain`
 - [`panner_plugin.md`](plugins/panner_plugin.md) — stereo panning, hand-rolled smoothing, and the bus-layout crash it taught us
+- [`delay_plugin.md`](plugins/delay_plugin.md) — the first time-based plugin *(scaffolded; DSP not written yet)*
 
 ## utils/
 

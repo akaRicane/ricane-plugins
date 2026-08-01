@@ -18,6 +18,11 @@ The output depends on past samples — this is the first **time-based** processo
 - **writeHead is shared across channels**: it must advance once per sample, outside the channel loop. Use samples-outer, channels-inner loop order.
 - **Allocate in prepareToPlay**: buffer size depends on sample rate, which isn't known until the host calls `prepareToPlay`. Always call `clear()` after allocation — uninitialized memory contains garbage.
 - **Wet/dry mix**: `(dry + delayed) / 2` is a 50/50 mix. In a real plugin this would be a parameter.
+- **Stay channel-generic**: the inner loop uses `buffer.getWritePointer(ch)`, so it handles any
+  channel count. Don't grab `getWritePointer(0)`/`getWritePointer(1)` up front — a host may hand
+  you a mono buffer, and indexing channel 1 then reads off the end. That is the bug that
+  segfaulted PannerPlugin; if you do index channels by number, you must implement
+  `isBusesLayoutSupported`.
 
 ## Header (private)
 ```cpp
@@ -44,9 +49,6 @@ const int delaySamples = static_cast<int>(
 );
 
 const int bufferSize = delayBuffer.getNumSamples();
-
-auto* dataL = buffer.getWritePointer(0);
-auto* dataR = buffer.getWritePointer(1);
 
 for (int i = 0; i < buffer.getNumSamples(); ++i)
 {
