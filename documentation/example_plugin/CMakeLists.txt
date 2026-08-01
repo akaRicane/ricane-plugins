@@ -1,7 +1,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # EXAMPLE / TEMPLATE plugin — heavily annotated for learning.
 # Copy this whole folder into bank/<Name>/ and rename to start a real plugin.
-# See documentation/starter_template.md for the step-by-step.
+# See documentation/setup/starter_template.md for the step-by-step.
 # ─────────────────────────────────────────────────────────────────────────────
 
 # The oldest CMake version allowed. JUCE 8 needs a modern CMake (>= 3.22).
@@ -12,7 +12,7 @@ project(NewPlugin VERSION 0.1.0)
 
 # Write build/compile_commands.json — the file that tells the editor's IntelliSense
 # the real include paths & defines, so juce:: symbols resolve (no red squiggles).
-# See documentation/editor_setup.md.
+# See documentation/setup/editor_setup.md.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Bring the JUCE framework into this build. The path is relative to THIS file:
@@ -23,7 +23,7 @@ add_subdirectory(../../JUCE JUCE)
 
 # Optional plugin validation. Off unless you configure with -DENABLE_PLUGINVAL=ON,
 # so it costs nothing until you ask for it. Validating a plugin catches the bugs
-# that only appear in a real host — see documentation/testing_with_pluginval.md.
+# that only appear in a real host — see documentation/tools/pluginval.md.
 include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/Pluginval.cmake)
 
 # Formats to build. pluginval_formats() appends AU when validation is enabled,

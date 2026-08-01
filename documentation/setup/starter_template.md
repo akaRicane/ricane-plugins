@@ -1,7 +1,7 @@
 # Starting a new plugin from the example
 
 The repo ships a fully-annotated, ready-to-copy skeleton at
-[`documentation/example_plugin/`](example_plugin). Every line is commented for learning, and it
+[`documentation/example_plugin/`](../example_plugin). Every line is commented for learning, and it
 **builds, loads, and passes audio through untouched**, with the parameter system (`apvts`)
 already wired and markers showing where DSP and controls go.
 
@@ -47,7 +47,7 @@ sed -i '' 's/PLUGIN_CODE Newp/PLUGIN_CODE Pann/' CMakeLists.txt      # 4-char co
 (The `sed -i ''` empty-quotes form is required on macOS.)
 
 ### 3. Register it for IntelliSense
-Add one line to the `compileCommands` array in [`.vscode/settings.json`](../.vscode/settings.json):
+Add one line to the `compileCommands` array in [`.vscode/settings.json`](../../.vscode/settings.json):
 ```jsonc
 "${workspaceFolder}/bank/Panner/build/compile_commands.json"
 ```
@@ -64,7 +64,7 @@ DSP.
 ./utils/validate.sh Panner    # check it behaves in a real host
 ```
 Do this once the DSP works, and again before you call the plugin finished. It catches the bugs
-a Standalone build never will — see [`testing_with_pluginval.md`](testing_with_pluginval.md).
+a Standalone build never will — see [`pluginval.md`](../tools/pluginval.md).
 
 Two things the template leaves to you, both of which validation will catch:
 - **`PLUGIN_CODE`** must be unique per plugin. The template ships `Newp`; change it.
@@ -82,6 +82,6 @@ Two things the template leaves to you, both of which validation will catch:
 
 ## Next, by plugin type
 
-- Parameter + simple DSP → [`01_gain.md`](01_gain.md)
-- Per-channel processing → [`02_panning.md`](02_panning.md)
-- Time-based / buffers → [`03_delay.md`](03_delay.md)
+- Parameter + simple DSP → [`01_gain.md`](../knowledge/01_gain.md)
+- Per-channel processing → [`02_panning.md`](../knowledge/02_panning.md)
+- Time-based / buffers → [`03_delay.md`](../knowledge/03_delay.md)

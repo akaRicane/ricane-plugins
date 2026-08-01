@@ -101,7 +101,7 @@ target_link_libraries(<Target> PRIVATE
   `ENABLE_PLUGINVAL` is on. Also note pluginval's `PLUGINVAL_ENABLE_RTCHECK` defaults ON only
   when pluginval is the *top-level* project, so as a dependency we set it ourselves.
   Both quirks are handled in `cmake/Pluginval.cmake` — see
-  [`testing_with_pluginval.md`](testing_with_pluginval.md).
+  [`pluginval.md`](../tools/pluginval.md).
 
 ## Validating a plugin
 
@@ -110,7 +110,7 @@ target_link_libraries(<Target> PRIVATE
 ```
 
 Uses a separate `build-pluginval/` tree so the normal `build/` one stays fast. Full guide in
-[`testing_with_pluginval.md`](testing_with_pluginval.md).
+[`pluginval.md`](../tools/pluginval.md).
 
 ## Starting a new plugin in /bank
 

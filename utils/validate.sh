@@ -5,7 +5,7 @@
 # pluginval loads the built plugin and abuses it the way a strict host would:
 # every sample-rate x block-size combination, parameter fuzzing, state save/
 # restore round-trips, editor open/close, and (via rtcheck) allocations or
-# locks on the audio thread. See documentation/testing_with_pluginval.md.
+# locks on the audio thread. See documentation/tools/pluginval.md.
 #
 # Two modes, same as build.sh:
 #   1) No argument  -> interactive menu of every plugin in bank/

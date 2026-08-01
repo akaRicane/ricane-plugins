@@ -2,7 +2,7 @@
 # Pluginval.cmake — optional plugin validation, shared by every plugin here.
 #
 # pluginval (tools/pluginval/, a git submodule) loads a built plugin and abuses
-# it the way a strict host would. See documentation/testing_with_pluginval.md.
+# it the way a strict host would. See documentation/tools/pluginval.md.
 #
 # A plugin's CMakeLists.txt uses this in three steps:
 #

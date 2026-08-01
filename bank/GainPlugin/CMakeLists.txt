@@ -11,7 +11,7 @@ project(GainPlugin VERSION 0.1.0)
 
 # Emit build/compile_commands.json so the editor's IntelliSense knows the
 # real include paths / defines (resolves all the juce:: symbols). See
-# documentation/editor_setup.md.
+# documentation/setup/editor_setup.md.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Pull the JUCE framework into this build. The path is relative to THIS file:
@@ -21,7 +21,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_subdirectory(../../JUCE JUCE)
 
 # Optional plugin validation (off unless -DENABLE_PLUGINVAL=ON).
-# See documentation/testing_with_pluginval.md.
+# See documentation/tools/pluginval.md.
 include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/Pluginval.cmake)
 
 # Formats to build. pluginval_formats() appends AU when validation is enabled,
