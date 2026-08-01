@@ -42,6 +42,15 @@ void PannerAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
   juce::ignoreUnused(samplesPerBlock); // Silence "unused" warnings for now.
 }
 
+// Vet the layouts the host proposes. Panning left against right only means anything
+// with two channels on each side, so accept stereo-in/stereo-out and nothing else.
+// Rejecting a layout is not a limitation — it is how the host learns to give us a
+// buffer we can actually handle, instead of a mono one we would read past the end of.
+bool PannerAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const {
+  const auto stereo = juce::AudioChannelSet::stereo();
+  return layouts.getMainInputChannelSet() == stereo && layouts.getMainOutputChannelSet() == stereo;
+}
+
 // The audio callback. `buffer` already holds the INPUT samples; edit it in place.
 void PannerAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer&) {
   juce::ScopedNoDenormals noDenormals; // Disable CPU denormals for this scope (always do this).

@@ -35,7 +35,7 @@ juce_add_plugin(PannerPlugin
     PRODUCT_NAME "Panner Plugin"           # Name shown to the user / in the DAW
     COMPANY_NAME "Ricane"               # Manufacturer name shown in the host
     PLUGIN_MANUFACTURER_CODE Rcan       # 4-char manufacturer ID (registry code)
-    PLUGIN_CODE Newp                    # 4-char plugin ID — make it UNIQUE per plugin
+    PLUGIN_CODE Pann                    # 4-char plugin ID — make it UNIQUE per plugin
     FORMATS ${PLUGIN_FORMATS}           # Which formats to build
     IS_SYNTH FALSE                      # Effect (processes audio), not an instrument
     NEEDS_MIDI_INPUT FALSE              # No MIDI in

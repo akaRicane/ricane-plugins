@@ -22,6 +22,11 @@ public:
   void releaseResources() override {}
   // THE audio loop. Runs hundreds of times/sec; must be fast and lock-free.
   void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+  // Which bus layouts we accept. MUST be implemented: the base class version just
+  // returns true, i.e. "any layout is fine". A host is allowed to take that at its
+  // word and hand processBlock a mono (or 5.1) buffer — and processBlock below
+  // indexes channel 1 unconditionally, which on a mono buffer reads off the end.
+  bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 
   // ── Editor (GUI) ─────────────────────────────────────────────────────────
   juce::AudioProcessorEditor* createEditor() override; // Builds our window.
