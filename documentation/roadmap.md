@@ -28,9 +28,9 @@ clone recursively, and add it per-plugin rather than globally.
 
 Things that are wrong or missing today, written down so they don't get quietly forgotten.
 
-- **PannerPlugin is stereo-only.** It refuses mono-in/stereo-out, which is a common way for a host
-  to place a mono source. Supporting it means handling the mono case in `processBlock`, not just
-  widening `isBusesLayoutSupported`. See
+- **PannerPlugin treats stereo input as balance, not true panning.** It attenuates each side rather
+  than moving the stereo image, so panning right turns the left channel down instead of relocating
+  its content. Fine for a channel-strip pan control; not a true stereo panner. See
   [`plugins/panner_plugin.md`](plugins/panner_plugin.md).
 - **PannerPlugin uses a simple −6 dB pan law**, so a centred signal is quieter than a hard-panned
   one. Equal-power panning (sin/cos, +3 dB centre) is the usual alternative — see

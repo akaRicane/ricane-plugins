@@ -29,6 +29,9 @@ Center is -6dB (both channels at 0.5). This is the simplest pan law — other DA
 - **Coefficient depends on sample rate**: compute in `prepareToPlay`, not hardcoded.
 - **Snap on startup**: initialize `smoothedPan` to the actual parameter value in `prepareToPlay` to avoid a ramp from zero on session load.
 - **Loop order for shared state**: samples outer, channels inner — so `smoothedPan` advances once per sample across both channels.
+- **Constrain the OUTPUT, not the input**: panning distributes a signal across two speakers, so two channels out is required; mono in is fine and is the classic use case.
+- **`buffer.getNumChannels()` ≠ number of input channels**: JUCE sizes the buffer by the *wider* bus. Mono-in/stereo-out gives a 2-channel buffer with only channel 0 filled — channel 1 is stale memory. Ask `getMainBusNumInputChannels()` instead.
+- **Duplicate mono input, never alias the pointer**: `dataR = dataL` applies both gains to the same samples (`leftGain * rightGain`), which silences the plugin at hard left/right. Use `buffer.copyFrom(1, 0, buffer, 0, 0, n)` — a memcpy, safe on the audio thread.
 
 ## Header (private)
 ```cpp

@@ -38,7 +38,7 @@ Requirements, editor setup and troubleshooting are in
 | Plugin | What it does |
 |---|---|
 | **[GainPlugin](documentation/plugins/gain_plugin.md)** | Volume control in decibels, click-free thanks to `juce::dsp::Gain` smoothing |
-| **[PannerPlugin](documentation/plugins/panner_plugin.md)** | Stereo panning with a −6 dB pan law and per-sample smoothing |
+| **[PannerPlugin](documentation/plugins/panner_plugin.md)** | Mono/stereo in → stereo out, −6 dB pan law, per-sample smoothing |
 | **[DelayPlugin](documentation/plugins/delay_plugin.md)** | The first time-based plugin — single-tap delay with dry/wet |
 
 ## Documentation
